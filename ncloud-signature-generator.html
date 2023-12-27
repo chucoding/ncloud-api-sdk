@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!--
+        💚 CLOVA Studio 학습 API 시그니처 코드 생성기 💚
+        🙋🏻‍♂️ 개발자 : 서현석 
+        🔗 링크드인 주소 : https://www.linkedin.com/in/chucoding/
+        🧑‍🤝‍🧑 블로그 주소 : https://chucoding.tistory.com/
+        😺 깃허브 주소 : https://github.com/chucoding
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLOVA Studio 학습 API 시그니처 코드 생성기</title>
+    <!-- Load CryptoJS from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>💚 CLOVA Studio 학습 API 시그니처 코드 생성기 💚</h1>
+    <hr>
+    <p>CLOVA Studio 학습 API를 사용하기 위해 필요한 Header 정보들을 빠르고 간단하게 만들 수 있도록 도와주는 프로그램 입니다. 😀</p>
+    <p><b>학습 생성 API, 학습 목록 조회 API</b> 2가지만 만들어 놓았는데 추가로 필요하신 API가 있다면 아래 링크를 참고하셔서 직접 커스텀 하셔서 사용하시길 바랍니다.</p>
+    <a href="https://api.ncloud-docs.com/docs/ai-naver-clovastudio-summary" target="_blank">🎯 CLOVA Studio API 전체 목록 보러가기</a>
+    <br><br><br>
+    <p>🤫 네이버클라우드 콘솔에서 발급받은 키가 노출되지 않도록 로컬환경에서만 사용하세요</p>
+    <p>🔐 NCLOUD_ACCESS_KEY, NCLOUD_SECRET_KEY 발급방법 : 네이버 클라우드 플랫폼 포털의 <b>마이페이지</b> > <b>계정 관리</b> > <b>인증키 관리</b> - <a href="https://www.ncloud.com/mypage/manage/authkey" target="_blank">https://www.ncloud.com/mypage/manage/authkey</a></li>
+    <br><br><br>
+    Happy Hacking 하세요🤗
+    <hr>
+    <h3>🪄 네이버클라우드 콘솔에서 발급받은 키를 입력하신 후 아래 버튼 중 선택하여 클릭하세요.</h3>
+    <label for="input1">NCLOUD_ACCESS_KEY:</label>
+    <input type="text" id="input1" placeholder="Enter text">
+
+    <br>
+
+    <label for="input2">NCLOUD_SECRET_KEY:</label>
+    <input type="text" id="input2" placeholder="Enter text">
+
+    <br>
+
+    <hr>
+    <button onclick="generate(1)">학습 생성 API</button>
+    <button onclick="generate(2)">학습 목록 조회 API</button>
+    <div id="output"></div>
+
+    <script>
+        function generate(mode) {
+            const ncloud_access_key = document.getElementById("input1").value;
+            const ncloud_secret_key = document.getElementById("input2").value;
+            const timestamp = new Date().getTime().toString();
+            let url = "https://clovastudio.apigw.ntruss.com";
+            let endpoint = "";
+            let method = "";
+
+            switch(mode) {
+                case 1:
+                    endpoint = "/tuning/v2/tasks"; //학습 생성 API
+                    method = "POST";
+                    break;
+                case 2:
+                    endpoint = "/tuning/v2/tasks"; //학습 목록 조회 API
+                    method = "GET";
+                    break;
+            }
+
+            if (!ncloud_access_key) {
+                alert("NCLOUD_ACCESS_KEY 값을 입력하세요.");
+                return;
+            }
+
+            if (!ncloud_secret_key) {
+                alert("NCLOUD_SECRET_KEY 값을 입력하세요.");
+                return;
+            }
+
+            console.log(endpoint);
+            const message = makeSignature(ncloud_access_key, ncloud_secret_key, timestamp, endpoint, method);
+            document.getElementById("output").innerHTML =
+            "<h3>Request URL</h3><hr>["+method+"] "+url+""+endpoint+"<br><br>"
+            + "<h3>Header</h3><hr>"
+            + "x-ncp-apigw-timestamp: "+timestamp+"<br>"
+            + "x-ncp-iam-access-key: "+ncloud_access_key+"<br>"
+            + "x-ncp-apigw-signature-v2 : "+message;
+        }
+
+        function makeSignature(ncloud_access_key, ncloud_secret_key, timestamp, endpoint, method) {
+            const space = " ";                  // one space
+            const newLine = "\n";               // new line
+
+            const hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, ncloud_secret_key);
+            hmac.update(method);
+            hmac.update(space);
+            hmac.update(endpoint);
+            hmac.update(newLine);
+            hmac.update(timestamp);
+            hmac.update(newLine);
+            hmac.update(ncloud_access_key);
+        
+            const hash = hmac.finalize();
+            return hash.toString(CryptoJS.enc.Base64);
+        }
+    </script>
+</body>
+</html>
