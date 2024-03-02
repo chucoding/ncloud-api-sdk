@@ -2,8 +2,8 @@ import json
 
 import requests
 
+# zip -r 파일이름.zip requirements.txt __main__.py
 
-# zip -r HyperCLOVA_X.zip requirements.txt __main__.py
 def main(args):
     data = json.loads(args["__ow_body"])
     url = "https://clovastudio.stream.ntruss.com/testapp/v1/chat-completions/HCX-003"
@@ -25,7 +25,7 @@ def main(args):
         ],
         "topP": 0.8,
         "topK": 0,
-        "maxTokens": 150,
+        "maxTokens": 256,
         "temperature": 0.5,
         "repeatPenalty": 5.0,
         "stopBefore": [],
